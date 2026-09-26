@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>國語演說練習室</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f3ec; --surface:#ffffff; --surface-2:#faf8f3; --ink:#1f2430; --ink-2:#5b6272; --line:#e4dfd3;
+  --primary:#1d4e89; --primary-ink:#ffffff; --primary-soft:#e3ecf7;
+  --good:#1f7a4d; --good-soft:#e2f3ea; --warn:#a85a0c; --warn-soft:#fbeedd; --danger:#b3261e; --danger-soft:#fbe4e2;
+  --shadow:0 1px 2px rgba(30,30,40,.06),0 4px 16px rgba(30,30,40,.06);
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15171c; --surface:#1e2128; --surface-2:#242832; --ink:#eceef2; --ink-2:#a4abb9; --line:#323744;
+    --primary:#7fb0ec; --primary-ink:#0f1a2a; --primary-soft:#1f2d42;
+    --good:#6fd3a0; --good-soft:#18332a; --warn:#f0b36a; --warn-soft:#3a2b18; --danger:#f28b82; --danger-soft:#3b1e1c;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.6;font-size:17px}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0 16px}
+.brand{font-weight:900;font-size:22px;letter-spacing:.04em}
+.brand small{display:block;font-weight:500;font-size:13px;color:var(--ink-2);letter-spacing:0}
+.mode{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--warn-soft);color:var(--warn)}
+.icon-btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 12px;cursor:pointer}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px}
+.screen{display:none}
+.screen.on{display:block}
+h1,h2,h3{line-height:1.3;margin:0 0 12px}
+.muted{color:var(--ink-2)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.field{display:flex;flex-direction:column;gap:6px;min-width:200px;flex:1}
+.field label{font-size:14px;color:var(--ink-2)}
+input[type=text],input[type=password],input[type=url],select,textarea{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:10px 12px;width:100%}
+textarea{min-height:140px;resize:vertical}
+.btn{border:0;border-radius:12px;padding:12px 22px;font-weight:700;cursor:pointer;background:var(--primary);color:var(--primary-ink);transition:transform .05s}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:transparent;color:var(--primary);border:1.5px solid var(--primary)}
+.btn.danger{background:var(--danger);color:#fff}
+.btn.big{font-size:20px;padding:16px 32px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.topic-card{margin:20px 0;padding:28px;border-radius:var(--radius);background:var(--primary-soft);text-align:center}
+.topic-card .label{font-size:14px;color:var(--ink-2)}
+.topic-card .topic{font-size:clamp(28px,6vw,44px);font-weight:900;color:var(--primary);letter-spacing:.06em}
+.clock{font-variant-numeric:tabular-nums;font-weight:900;letter-spacing:.02em}
+.prep-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:20px}
+@media (max-width:760px){.prep-grid{grid-template-columns:1fr}}
+.guide{margin:0;padding-left:20px}
+.guide li{margin:6px 0}
+.cam{position:relative;background:#000;border-radius:var(--radius);overflow:hidden;aspect-ratio:16/9}
+.cam video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block}
+.cam .overlay{position:absolute;inset:auto 0 0 0;padding:12px 16px;display:flex;justify-content:space-between;align-items:flex-end;background:linear-gradient(transparent,rgba(0,0,0,.65));color:#fff}
+.cam .clock{font-size:clamp(40px,9vw,72px);line-height:1}
+.rec-dot{display:inline-flex;align-items:center;gap:6px;font-size:14px;background:rgba(0,0,0,.5);padding:4px 10px;border-radius:999px;position:absolute;top:12px;left:12px;color:#fff}
+.rec-dot::before{content:"";width:10px;height:10px;border-radius:50%;background:#ff4d4d;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.2}}
+.bells{display:flex;gap:10px;flex-wrap:wrap;font-size:14px}
+.bell{padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3)}
+.bell.rung{background:#ffd166;color:#222;border-color:#ffd166}
+.caption{min-height:52px;margin-top:12px;padding:10px 14px;border-radius:10px;background:var(--surface-2);border:1px dashed var(--line);color:var(--ink-2);font-size:15px}
+.flash{animation:flash .6s}
+@keyframes flash{0%{box-shadow:0 0 0 0 rgba(255,209,102,.9)}100%{box-shadow:0 0 0 24px rgba(255,209,102,0)}}
+.spinner{width:48px;height:48px;border-radius:50%;border:5px solid var(--primary-soft);border-top-color:var(--primary);animation:spin 1s linear infinite;margin:8px auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+@media (max-width:760px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.tile{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.tile .k{font-size:13px;color:var(--ink-2)}
+.tile .v{font-size:26px;font-weight:900;font-variant-numeric:tabular-nums}
+.tile .n{font-size:13px}
+.idea{padding:14px 16px;border-left:4px solid var(--primary);background:var(--primary-soft);border-radius:8px;margin:8px 0 20px}
+.sec-title{display:flex;align-items:center;gap:8px;margin:24px 0 10px;font-size:20px;font-weight:900}
+.sec-title .badge{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:15px;color:#fff}
+.fb{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0;background:var(--surface)}
+.fb.good{border-left:5px solid var(--good)}
+.fb.warn{border-left:5px solid var(--warn)}
+.fb .head{font-weight:700;margin-bottom:4px}
+.fb .meta{font-size:13px;color:var(--ink-2);margin-bottom:6px}
+.fb .quote{font-size:15px;background:var(--surface-2);border-radius:8px;padding:6px 10px;margin:6px 0}
+.fb .next{margin-top:8px;padding:8px 12px;border-radius:8px;background:var(--good-soft)}
+.fb .next b{color:var(--good)}
+.chip{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--warn-soft);color:var(--warn);margin-right:6px;font-weight:700}
+.focus{margin-top:20px;padding:18px;border-radius:var(--radius);background:var(--primary);color:var(--primary-ink);font-size:19px;font-weight:700}
+.player{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:16px 0}
+.player audio{flex:1;min-width:240px}
+details{margin-top:16px}
+details pre{white-space:pre-wrap;font-family:inherit;font-size:15px;background:var(--surface-2);padding:12px;border-radius:10px;max-height:360px;overflow:auto}
+.err{background:var(--danger-soft);color:var(--danger);padding:12px 14px;border-radius:10px;margin:12px 0;display:none}
+.err.on{display:block}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+.modal.on{display:flex}
+.modal .card{width:100%;max-width:520px}
+.note{font-size:13px;color:var(--ink-2)}
+.switch{display:inline-flex;gap:8px;align-items:center;font-size:14px;color:var(--ink-2);cursor:pointer}
+.phases{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.phases li{display:grid;grid-template-columns:110px 1fr;gap:10px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);font-size:15px}
+.phases li b{white-space:nowrap}
+.phases li .t{display:block;font-size:12px;color:var(--ink-2);font-weight:500}
+.phases li.now{border-color:var(--primary);background:var(--primary-soft)}
+.phases li.done{opacity:.55}
+@media (max-width:480px){.phases li{grid-template-columns:1fr}}
+.map{display:grid;gap:10px}
+.parts{display:grid;gap:8px}
+.part{border:1px dashed var(--line);border-radius:10px;padding:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.part .ttl{grid-column:1/-1;font-size:14px;font-weight:700;color:var(--primary)}
+.part input{padding:8px 10px}
+@media (max-width:560px){.part{grid-template-columns:1fr}}
+.stories{margin:0;padding-left:20px;font-size:15px}
+.stories li{margin:4px 0}
+.bank{margin-top:16px}
+.bank summary{cursor:pointer}
+.bank-row{display:grid;grid-template-columns:1fr 2fr auto;gap:8px;margin:8px 0}
+@media (max-width:560px){.bank-row{grid-template-columns:1fr}}
+.plancheck{font-size:15px;color:var(--ink-2);margin:-8px 0 12px}
+.gas-note{background:var(--warn-soft);color:var(--warn);padding:10px 12px;border-radius:10px;font-size:14px}
+.devices{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.devices .field{min-width:160px}
+.devices select{padding:8px 10px;font-size:15px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">國語演說練習室<small>抽題・準備・上臺・評講</small></div>
+    <div class="row">
+      <span class="mode" id="modeTag" hidden>示範模式</span>
+      <button class="icon-btn" id="btnSettings" aria-label="設定">設定</button>
+    </div>
+  </header>
+
+  <!-- 1. 開始 -->
+  <section class="screen on" id="s-start">
+    <div class="card">
+      <h1>準備好練習了嗎？</h1>
+      <p class="muted">比賽規格：抽題後準備 30 分鐘，上臺演說 4～5 分鐘。4 分鐘響一聲短鈴，5 分鐘響一短一長。</p>
+      <div class="row" style="margin-top:16px">
+        <div class="field"><label for="student">你的名字</label><input type="text" id="student" maxlength="20" placeholder="例如：王小明"></div>
+        <div class="field"><label for="prepMin">準備時間</label>
+          <select id="prepMin">
+            <option value="30">30 分鐘（比賽規格）</option>
+            <option value="15">15 分鐘</option>
+            <option value="5">5 分鐘</option>
+            <option value="0">不準備，直接上臺</option>
+          </select>
+        </div>
+      </div>
+      <div class="err" id="startErr"></div>
+      <div id="topicBox" hidden>
+        <div class="topic-card"><div class="label">你抽到的題目</div><div class="topic" id="topicText"></div></div>
+        <div class="row">
+          <button class="btn big" id="btnBeginPrep">開始準備</button>
+          <button class="btn ghost" id="btnRedraw">換一題（練習用）</button>
+        </div>
+      </div>
+      <div class="row" id="drawRow" style="margin-top:20px"><button class="btn big" id="btnDraw">抽題</button></div>
+    </div>
+    <details class="card bank" id="bankBox">
+      <summary><b>我的故事素材庫</b> <span class="note">平常先整理 5～8 個自己的真實故事，抽到題目時換個角度就能用</span></summary>
+      <p class="note">例如「科展前一天模型壞掉」：抽到「在挫折中學習」講修好它的過程；抽到「可貴的合作經驗」講大家怎麼分工；抽到「把阻力化為助力」講因此發現設計的盲點。</p>
+      <div id="bankList"></div>
+      <div class="row"><button class="btn ghost" id="btnAddStory">＋ 新增一個故事</button></div>
+      <p class="note">素材庫只存在這台電腦的瀏覽器。</p>
+    </details>
+  </section>
+
+  <!-- 2. 準備 -->
+  <section class="screen" id="s-prep">
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div><div class="muted">題目</div><h2 id="prepTopic" style="color:var(--primary)"></h2></div>
+        <div style="text-align:right"><div class="muted">準備時間剩下</div><div class="clock" id="prepClock" style="font-size:44px">30:00</div></div>
+      </div>
+      <div class="prep-grid" style="margin-top:12px">
+        <div>
+          <h3>準備的四個階段</h3>
+          <ol class="phases" id="phases">
+            <li data-p="0"><b>審題破題</b><span>圈出題目關鍵字，寫一句主旨，從素材庫挑故事，決定怎麼開頭。</span></li>
+            <li data-p="1"><b>畫表達地圖</b><span>每段只寫三樣：一個重點、一個故事、一個關鍵字。不要寫逐字稿。</span></li>
+            <li data-p="2"><b>小聲演練</b><span>看著地圖小聲講一遍，抓時間，練段落之間的轉折句。</span></li>
+            <li data-p="3"><b>深呼吸</b><span>放下筆不再改，慢慢深呼吸，想著「我要分享什麼給大家」。</span></li>
+          </ol>
+          <h3 style="margin-top:18px">表達地圖 <small class="note">只寫關鍵字；上臺後會收起來</small></h3>
+          <div class="map">
+            <div class="field"><label for="mIdea">主旨：我要告訴大家的是</label><input type="text" id="mIdea" maxlength="40"></div>
+            <div class="field"><label for="mOpen">破題（鳳頭）</label>
+              <select id="mOpen"><option value="">選一種開頭</option><option>提問破題：用一個問題開場</option><option>故事破題：直接把大家帶進一個畫面</option><option>引用破題：一句名言或文學意象</option></select></div>
+            <div class="parts" id="mParts"></div>
+            <div class="field"><label for="mEnd">結尾（豹尾）：重述重點＋一句話，或說出行動</label><input type="text" id="mEnd" maxlength="40"></div>
+            <p class="note" id="mWarn" hidden>字有點多了，表達地圖只寫關鍵字就好。</p>
+          </div>
+        </div>
+        <div>
+          <h3>鏡頭檢查</h3>
+          <div class="cam" id="prepCam"><video id="prepVideo" autoplay muted playsinline></video></div>
+          <div class="devices" data-devices>
+            <div class="field"><label>鏡頭</label><select class="camSel" aria-label="選擇鏡頭"></select></div>
+            <div class="field"><label>麥克風</label><select class="micSel" aria-label="選擇麥克風"></select></div>
+          </div>
+          <p class="note" id="camNote">正在開啟鏡頭與麥克風…</p>
+          <button class="btn big" id="btnToStage" style="width:100%">準備好了，上臺</button>
+          <h3 style="margin-top:18px">我的故事素材庫</h3>
+          <p class="note">想一想：哪個故事換個角度，就能講這個題目？</p>
+          <ul class="stories" id="prepStories"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 上臺 -->
+  <section class="screen" id="s-speak">
+    <div class="card">
+      <div class="row" style="justify-content:space-between;margin-bottom:12px">
+        <h2 id="speakTopic" style="margin:0;color:var(--primary)"></h2>
+        <label class="switch"><input type="checkbox" id="showCaption"> 顯示即時字幕（練習用，比賽時沒有）</label>
+      </div>
+      <div class="cam" id="stageCam">
+        <video id="stageVideo" autoplay muted playsinline></video>
+        <span class="rec-dot" id="recDot" hidden>錄影中</span>
+        <div class="overlay">
+          <div class="clock" id="speakClock">0:00</div>
+          <div class="bells"><span class="bell" id="bell4">4:00 短鈴</span><span class="bell" id="bell5">5:00 一短一長</span></div>
+        </div>
+      </div>
+      <div class="devices" data-devices id="stageDevices">
+        <div class="field"><label>鏡頭</label><select class="camSel" aria-label="選擇鏡頭"></select></div>
+        <div class="field"><label>麥克風</label><select class="micSel" aria-label="選擇麥克風"></select></div>
+      </div>
+      <div class="caption" id="caption" hidden></div>
+      <div class="row" style="margin-top:16px;justify-content:center">
+        <button class="btn big" id="btnStart">開始演說</button>
+        <button class="btn big danger" id="btnStop" hidden>結束演說</button>
+      </div>
+      <p class="note" style="text-align:center">上臺先說：「我是第○號，今天演說的題目是……」，接著馬上破題。忘詞時閉嘴停兩三秒、深呼吸，不要用「呃、然後」填空。超過 6 分鐘會自動停止。</p>
+    </div>
+  </section>
+
+  <!-- 4. 分析中 -->
+  <section class="screen" id="s-wait">
+    <div class="card" style="text-align:center">
+      <div class="spinner"></div>
+      <h2>AI 老師正在聽你的演說</h2>
+      <p class="muted" id="waitNote">大約需要 30～60 秒，請不要關掉這個頁面。</p>
+      <div class="tiles" id="waitTiles" style="text-align:left"></div>
+      <div class="err" id="waitErr"></div>
+      <div class="row" id="waitActions" style="justify-content:center" hidden>
+        <button class="btn" id="btnRetry">再送一次</button>
+        <a class="btn ghost" id="dlRaw" download>下載錄影</a>
+        <button class="btn ghost" id="btnAgain2">重新練習</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 結果 -->
+  <section class="screen" id="s-result">
+    <div class="card">
+      <div class="muted" id="resMeta"></div>
+      <h1 id="resTopic" style="color:var(--primary)"></h1>
+      <div class="player">
+        <button class="btn" id="btnSpeak">請老師念給我聽</button>
+        <audio id="ttsAudio" controls hidden></audio>
+        <span class="note" id="ttsNote"></span>
+      </div>
+      <div class="tiles" id="resTiles"></div>
+      <div class="idea" id="resIdea"></div>
+      <p class="plancheck" id="resPlan"></p>
+
+      <div class="sec-title"><span class="badge" style="background:var(--good)">3</span>做得好的地方</div>
+      <div id="resGood"></div>
+
+      <div class="sec-title"><span class="badge" style="background:var(--warn)">5</span>下次要改的地方</div>
+      <div id="resWarn"></div>
+
+      <div class="focus" id="resFocus"></div>
+
+      <details><summary>看我的錄影</summary><video id="replay" controls style="width:100%;margin-top:10px;border-radius:12px;background:#000"></video>
+        <p><a id="dlVideo" download>下載錄影檔</a></p></details>
+      <details><summary>AI 聽寫的逐字稿</summary><pre id="resTranscript"></pre></details>
+      <p class="note">分數是 AI 的練習估計，不是正式成績。發音評語標有「AI 聽音參考」的，請老師再確認。</p>
+      <div class="row" style="margin-top:16px"><button class="btn big" id="btnAgain">再練一次</button></div>
+    </div>
+  </section>
+</div>
+
+<!-- 設定視窗 -->
+<div class="modal" id="mSettings" role="dialog" aria-modal="true" aria-labelledby="mSetTitle">
+  <div class="card">
+    <h2 id="mSetTitle">設定</h2>
+    <div class="field"><label for="setUrl">後端網址（Apps Script 網頁應用程式網址）</label><input type="url" id="setUrl" placeholder="https://script.google.com/macros/s/…/exec"></div>
+    <div class="field" style="margin-top:12px"><label for="setPass">通關密碼</label><input type="password" id="setPass"></div>
+    <div class="field" style="margin-top:12px"><label for="setProfile">學生資料（給 AI 老師參考年級與站姿標準）</label><input type="text" id="setProfile" maxlength="30" placeholder="國小六年級女生"></div>
+    <p class="note">網址留白＝示範模式（不連 AI，用假資料跑流程）。設定只存在這台電腦的瀏覽器。</p>
+    <div class="row" style="justify-content:flex-end;margin-top:12px">
+      <button class="btn ghost" id="btnSetCancel">取消</button><button class="btn" id="btnSetSave">儲存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 部署設定：把 Apps Script 網頁應用程式網址貼在這裡 ============ */
+const CONFIG = {
+  GAS_URL: 'https://script.google.com/macros/s/AKfycbzFjILVdZQG6Z7xK_Qnj42jSp9IAH755EGWU3Qe8OWs-Ie6Su9cucq8miGzA7sVCczh/exec',  // 國語演說練習室 v0.2 部署
+  MIN_SEC: 240,           // 4:00 短鈴
+  MAX_SEC: 300,           // 5:00 一短一長
+  AUTO_STOP_SEC: 360,     // 6:00 自動停止
+  FRAME_EVERY_SEC: 20,    // 每 20 秒截一張畫面給 AI 看臺風
+};
+/* ======================================================================== */
+
+const $ = (id) => document.getElementById(id);
+const store = {
+  get(k){ try { return localStorage.getItem(k) || ''; } catch(e){ return ''; } },
+  set(k,v){ try { localStorage.setItem(k, v); } catch(e){} },
+};
+const S = { student:'', topic:'', stream:null, recV:null, recA:null, chunksV:[], chunksA:[], mimeA:'', t0:0, tick:null,
+  rung4:false, rung5:false, frames:[], recog:null, recogOn:false, finalText:'', audioCtx:null, videoUrl:'', audioBlob:null,
+  duration:0, result:null, ttsUrl:'', prepTimer:null };
+
+const IN_GAS = typeof google !== 'undefined' && google.script && google.script.run;
+function apiUrl(){ return CONFIG.GAS_URL || store.get('gasUrl'); }
+function isDemo(){ return !IN_GAS && !apiUrl(); }
+function profile(){ return store.get('profile') || '國小六年級女生'; }
+function gasRun(req){
+  return new Promise((res, rej) => google.script.run
+    .withSuccessHandler(res)
+    .withFailureHandler(e => rej(new Error((e && e.message) || String(e))))
+    .apiCall(req));
+}
+function show(id){ document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); window.scrollTo(0,0); }
+function fmt(sec){ sec = Math.max(0, Math.floor(sec)); return Math.floor(sec/60) + ':' + String(sec%60).padStart(2,'0'); }
+function setErr(el, msg){ el.textContent = msg || ''; el.classList.toggle('on', !!msg); }
+
+async function api(action, payload){
+  if (isDemo()) return demoApi(action, payload);
+  const req = Object.assign({ action, passcode: store.get('passcode'), profile: profile() }, payload);
+  let data;
+  if (IN_GAS) data = await gasRun(req);
+  else data = await (await fetch(apiUrl(), { method:'POST', body: JSON.stringify(req) })).json();
+  if (!data.ok && data.code === 'PASSCODE') { openSettings('通關密碼不正確，請向老師詢問。'); }
+  if (!data.ok) throw new Error(data.error || '後端發生錯誤');
+  return data;
+}
+
+/* ---------- 設定 ---------- */
+function openSettings(msg){
+  $('setUrl').value = IN_GAS ? '（已在 Apps Script 內，不需要填）' : (CONFIG.GAS_URL || store.get('gasUrl'));
+  $('setUrl').disabled = !!CONFIG.GAS_URL || IN_GAS;
+  $('setPass').value = store.get('passcode');
+  $('setProfile').value = profile();
+  $('mSettings').classList.add('on');
+  if (msg) setTimeout(() => alertInline(msg), 0);
+}
+function alertInline(msg){ const p = document.createElement('p'); p.className='err on'; p.textContent = msg; $('mSettings').querySelector('.card').insertBefore(p, $('mSettings').querySelector('.card').children[1]); }
+$('btnSettings').onclick = () => openSettings();
+$('btnSetCancel').onclick = () => $('mSettings').classList.remove('on');
+$('btnSetSave').onclick = () => {
+  if (!CONFIG.GAS_URL && !IN_GAS) store.set('gasUrl', $('setUrl').value.trim());
+  store.set('passcode', $('setPass').value.trim());
+  store.set('profile', $('setProfile').value.trim() || '國小六年級女生');
+  $('mSettings').classList.remove('on');
+  $('mSettings').querySelectorAll('.err').forEach(e => e.remove());
+  refreshMode();
+};
+function refreshMode(){ $('modeTag').hidden = !isDemo(); }
+refreshMode();
+$('student').value = store.get('student');
+
+/* ---------- 1. 抽題 ---------- */
+async function draw(){
+  setErr($('startErr'), '');
+  const name = $('student').value.trim();
+  if (!name) { setErr($('startErr'), '請先輸入你的名字。'); $('student').focus(); return; }
+  S.student = name; store.set('student', name);
+  $('btnDraw').disabled = $('btnRedraw').disabled = true;
+  try {
+    const r = await api('drawTopic', { exclude: S.topic });
+    S.topic = r.topic;
+    $('topicText').textContent = r.topic;
+    $('topicBox').hidden = false; $('drawRow').hidden = true;
+  } catch (e) { setErr($('startErr'), '抽題失敗：' + e.message); }
+  $('btnDraw').disabled = $('btnRedraw').disabled = false;
+}
+$('btnDraw').onclick = draw;
+$('btnRedraw').onclick = draw;
+
+/* ---------- 2. 準備 ---------- */
+// 30 分鐘的四個階段（依攻略：0–5 審題破題、5–20 表達地圖、20–25 小聲演練、25–30 深呼吸），準備時間較短時等比例縮放
+const PHASE_END = [5/30, 20/30, 25/30, 1];
+function renderPhases(total, elapsed){
+  const lis = document.querySelectorAll('#phases li');
+  let start = 0;
+  lis.forEach((li, i) => {
+    const end = PHASE_END[i];
+    const a = Math.round(start * total), b = Math.round(end * total);
+    let t = li.querySelector('.t'); if (!t) { t = el('span', 't'); li.firstElementChild.appendChild(t); }
+    t.textContent = fmt(a) + '–' + fmt(b);
+    li.classList.toggle('now', elapsed >= a && elapsed < b);
+    li.classList.toggle('done', elapsed >= b);
+    start = end;
+  });
+}
+function renderMap(){
+  const box = $('mParts'); box.innerHTML = '';
+  ['第一段', '第二段', '第三段'].forEach((name, i) => {
+    const p = el('div', 'part'); p.append(el('div', 'ttl', name + '（豬肚）'));
+    [['point','一個重點'],['story','一個故事'],['key','一個關鍵字']].forEach(([k, ph]) => {
+      const inp = document.createElement('input'); inp.type = 'text'; inp.id = 'm' + k + i; inp.placeholder = ph; inp.maxLength = 30;
+      inp.setAttribute('aria-label', name + ph); inp.dataset.k = k; p.append(inp);
+    });
+    box.append(p);
+  });
+  ['mIdea','mEnd'].forEach(id => $(id).value = ''); $('mOpen').value = '';
+}
+function collectPlan(){
+  return { idea: $('mIdea').value.trim(), opening: $('mOpen').value, ending: $('mEnd').value.trim(),
+    parts: [0,1,2].map(i => ({ point: $('mpoint'+i).value.trim(), story: $('mstory'+i).value.trim(), key: $('mkey'+i).value.trim() })) };
+}
+document.addEventListener('input', (e) => {
+  if (!e.target.closest || !e.target.closest('.map')) return;
+  const long = [...document.querySelectorAll('.map input')].some(x => x.value.length > 18);
+  $('mWarn').hidden = !long;
+});
+
+$('btnBeginPrep').onclick = async () => {
+  ensureAudioCtx();
+  $('prepTopic').textContent = S.topic;
+  renderMap(); renderPrepStories();
+  show('s-prep');
+  openCamera();
+  const total = Number($('prepMin').value) * 60;
+  let left = total;
+  if (left === 0) { goStage(); return; }
+  $('prepClock').textContent = fmt(left);
+  renderPhases(total, 0);
+  clearInterval(S.prepTimer);
+  const end = Date.now() + left * 1000;
+  S.prepTimer = setInterval(() => {
+    left = Math.ceil((end - Date.now()) / 1000);
+    $('prepClock').textContent = fmt(left);
+    renderPhases(total, total - left);
+    if (left === 60) $('prepClock').style.color = 'var(--warn)';
+    if (left <= 0) { clearInterval(S.prepTimer); ring('short'); goStage(); }
+  }, 250);
+};
+
+/* ---------- 故事素材庫（存在這台電腦的瀏覽器） ---------- */
+function loadBank(){ try { return JSON.parse(store.get('storyBank') || '[]'); } catch(e){ return []; } }
+function saveBank(b){ store.set('storyBank', JSON.stringify(b)); }
+function renderBank(){
+  const list = $('bankList'); list.innerHTML = '';
+  const bank = loadBank();
+  bank.forEach((s, i) => {
+    const row = el('div', 'bank-row');
+    const t = document.createElement('input'); t.type = 'text'; t.id = 'bt' + i; t.value = s.title || ''; t.placeholder = '故事名稱'; t.maxLength = 30; t.setAttribute('aria-label','故事名稱');
+    const d = document.createElement('input'); d.type = 'text'; d.id = 'bd' + i; d.value = s.note || ''; d.placeholder = '可以接到哪些題目？例如：挫折、合作、堅持'; d.maxLength = 80; d.setAttribute('aria-label','可以接的題目');
+    const x = el('button', 'icon-btn', '刪除');
+    t.onchange = d.onchange = () => { const b = loadBank(); b[i] = { title: t.value.trim(), note: d.value.trim() }; saveBank(b); };
+    x.onclick = () => { const b = loadBank(); b.splice(i, 1); saveBank(b); renderBank(); };
+    row.append(t, d, x); list.append(row);
+  });
+  if (!bank.length) list.append(el('p', 'note', '還沒有故事。按「新增一個故事」開始整理。'));
+}
+$('btnAddStory').onclick = () => { const b = loadBank(); if (b.length >= 8) return; b.push({ title:'', note:'' }); saveBank(b); renderBank(); const n = $('bt' + (b.length - 1)); if (n) n.focus(); };
+function renderPrepStories(){
+  const ul = $('prepStories'); ul.innerHTML = '';
+  const bank = loadBank().filter(s => s.title);
+  if (!bank.length) { ul.append(el('li', 'note', '素材庫是空的，下次可以先在首頁整理。')); return; }
+  bank.forEach(s => ul.append(el('li', '', s.title + (s.note ? '：' + s.note : ''))));
+}
+$('btnToStage').onclick = () => { clearInterval(S.prepTimer); goStage(); };
+
+/* ---------- 鏡頭與麥克風選擇 ---------- */
+// OBS、Snap Camera、ManyCam、NVIDIA Broadcast 等虛擬鏡頭常常搶走預設位置，畫面卻是黑的
+const VIRTUAL_CAM = /virtual|obs|snap ?camera|manycam|xsplit|nvidia broadcast|droidcam|iriun|epoccam|camo|mmhmm|vcam|splitcam|youcam|e2esoft|虛擬/i;
+function videoConstraints(camId){
+  const v = { width:{ideal:1280}, height:{ideal:720} };
+  if (camId) v.deviceId = { exact: camId }; else v.facingMode = 'user';
+  return v;
+}
+function audioConstraints(micId){
+  const a = { echoCancellation:true, noiseSuppression:true };
+  if (micId) a.deviceId = { exact: micId };
+  return a;
+}
+function stopStream(){ if (S.stream) { S.stream.getTracks().forEach(t => t.stop()); S.stream = null; } }
+function trackId(kind){ const t = S.stream && (kind === 'video' ? S.stream.getVideoTracks() : S.stream.getAudioTracks())[0]; return t ? (t.getSettings().deviceId || '') : ''; }
+function trackLabel(kind){ const t = S.stream && (kind === 'video' ? S.stream.getVideoTracks() : S.stream.getAudioTracks())[0]; return t ? t.label : ''; }
+
+async function refreshDevices(){
+  if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return [];
+  const devs = await navigator.mediaDevices.enumerateDevices();
+  const cams = devs.filter(d => d.kind === 'videoinput');
+  const mics = devs.filter(d => d.kind === 'audioinput' && d.deviceId !== 'communications');
+  const curCam = trackId('video'), curMic = trackId('audio');
+  document.querySelectorAll('.camSel').forEach(sel => {
+    sel.innerHTML = '';
+    cams.forEach((d, i) => {
+      const name = d.label || ('鏡頭 ' + (i + 1));
+      const o = new Option(name + (VIRTUAL_CAM.test(name) ? '（虛擬鏡頭）' : ''), d.deviceId);
+      sel.add(o);
+    });
+    if (!cams.length) sel.add(new Option('找不到鏡頭', ''));
+    if (curCam) sel.value = curCam;
+  });
+  document.querySelectorAll('.micSel').forEach(sel => {
+    sel.innerHTML = '';
+    mics.forEach((d, i) => sel.add(new Option(d.label || ('麥克風 ' + (i + 1)), d.deviceId)));
+    if (!mics.length) sel.add(new Option('找不到麥克風', ''));
+    if (curMic) sel.value = curMic;
+  });
+  return cams;
+}
+document.addEventListener('change', async (e) => {
+  const sel = e.target;
+  if (!sel.classList || !(sel.classList.contains('camSel') || sel.classList.contains('micSel'))) return;
+  if (S.tick) return; // 錄影中不換裝置
+  store.set(sel.classList.contains('camSel') ? 'camId' : 'micId', sel.value);
+  stopStream();
+  await openCamera();
+});
+if (navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
+  navigator.mediaDevices.addEventListener('devicechange', () => { if (S.stream) refreshDevices(); });
+}
+
+async function openCamera(){
+  if (S.stream) { attachStream(); return; }
+  $('camNote').className = 'note';
+  $('camNote').textContent = '正在開啟鏡頭與麥克風…';
+  const camId = store.get('camId'), micId = store.get('micId');
+  try {
+    try {
+      S.stream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints(camId), audio: audioConstraints(micId) });
+    } catch (eSaved) {
+      if (!camId && !micId) throw eSaved;
+      // 上次選的裝置拔掉了：改用預設裝置
+      store.set('camId', ''); store.set('micId', '');
+      S.stream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints(''), audio: audioConstraints('') });
+    }
+    const cams = await refreshDevices();
+    // 沒有指定過鏡頭、預設卻是虛擬鏡頭時，自動換成實體鏡頭
+    if (!store.get('camId') && VIRTUAL_CAM.test(trackLabel('video'))) {
+      const real = cams.find(d => d.label && !VIRTUAL_CAM.test(d.label));
+      if (real) {
+        stopStream();
+        S.stream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints(real.deviceId), audio: audioConstraints(micId) });
+        await refreshDevices();
+      }
+    }
+    $('camNote').textContent = '畫面看得到你的上半身就可以了。畫面是黑的或不是你？從上面的選單換一個鏡頭。';
+  } catch (e) {
+    try {
+      S.stream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints(micId) });
+      await refreshDevices();
+      $('camNote').textContent = '找不到可用的鏡頭，這次只錄聲音（臺風不評）。可以從上面的選單換鏡頭再試。';
+    } catch (e2) {
+      $('camNote').textContent = IN_GAS
+        ? 'Google 的網頁框架擋住了鏡頭和麥克風。請改用這個網址：https://nio203taiwan.github.io/speech-coach/ （題庫、評講、紀錄都一樣）'
+        : '無法使用麥克風：請在瀏覽器網址列左邊允許「攝影機」與「麥克風」，再重新整理。';
+      $('camNote').className = 'gas-note';
+      return;
+    }
+  }
+  attachStream();
+}
+function attachStream(){ $('prepVideo').srcObject = S.stream; $('stageVideo').srcObject = S.stream; }
+
+/* ---------- 3. 上臺 ---------- */
+function goStage(){
+  S.plan = collectPlan();
+  $('speakTopic').textContent = S.topic;
+  $('speakClock').textContent = '0:00';
+  ['bell4','bell5'].forEach(id => $(id).classList.remove('rung'));
+  $('btnStart').hidden = false; $('btnStop').hidden = true; $('recDot').hidden = true; $('stageDevices').hidden = false;
+  $('caption').textContent = ''; $('caption').hidden = !$('showCaption').checked;
+  show('s-speak');
+  if (!S.stream) openCamera();
+}
+$('showCaption').onchange = () => { $('caption').hidden = !$('showCaption').checked; };
+
+function pickMime(list){ return list.find(m => window.MediaRecorder && MediaRecorder.isTypeSupported(m)) || ''; }
+
+$('btnStart').onclick = () => {
+  if (!S.stream) { alert('還沒有開啟麥克風，請允許瀏覽器使用麥克風。'); return; }
+  ensureAudioCtx();
+  S.chunksV = []; S.chunksA = []; S.frames = []; S.finalText = ''; S.rung4 = S.rung5 = false; S.result = null; S.ttsUrl = '';
+  const hasVideo = S.stream.getVideoTracks().length > 0;
+
+  if (hasVideo) {
+    const mv = pickMime(['video/webm;codecs=vp8,opus','video/webm','video/mp4']);
+    S.recV = new MediaRecorder(S.stream, Object.assign({ videoBitsPerSecond: 1000000 }, mv ? { mimeType: mv } : {}));
+    S.recV.ondataavailable = e => { if (e.data.size) S.chunksV.push(e.data); };
+    S.recV.start(1000);
+  } else S.recV = null;
+
+  const aStream = new MediaStream(S.stream.getAudioTracks());
+  S.mimeA = pickMime(['audio/webm;codecs=opus','audio/webm','audio/mp4']);
+  S.recA = new MediaRecorder(aStream, Object.assign({ audioBitsPerSecond: 48000 }, S.mimeA ? { mimeType: S.mimeA } : {}));
+  S.recA.ondataavailable = e => { if (e.data.size) S.chunksA.push(e.data); };
+  S.recA.start(1000);
+
+  startRecognition();
+  S.t0 = performance.now();
+  $('btnStart').hidden = true; $('btnStop').hidden = false; $('recDot').hidden = false; $('stageDevices').hidden = true;
+  let nextFrame = 5;
+  S.tick = setInterval(() => {
+    const t = (performance.now() - S.t0) / 1000;
+    $('speakClock').textContent = fmt(t);
+    if (!S.rung4 && t >= CONFIG.MIN_SEC) { S.rung4 = true; ring('short'); markBell('bell4'); }
+    if (!S.rung5 && t >= CONFIG.MAX_SEC) { S.rung5 = true; ring('shortlong'); markBell('bell5'); }
+    if (hasVideo && t >= nextFrame) { grabFrame(t); nextFrame += CONFIG.FRAME_EVERY_SEC; }
+    if (t >= CONFIG.AUTO_STOP_SEC) stopSpeech();
+  }, 200);
+};
+$('btnStop').onclick = () => stopSpeech();
+
+function markBell(id){ $(id).classList.add('rung'); $('stageCam').classList.remove('flash'); void $('stageCam').offsetWidth; $('stageCam').classList.add('flash'); }
+
+function grabFrame(t){
+  const v = $('stageVideo'); if (!v.videoWidth) return;
+  const w = 480, h = Math.round(w * v.videoHeight / v.videoWidth);
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  c.getContext('2d').drawImage(v, 0, 0, w, h);
+  S.frames.push({ t: Math.round(t), data: c.toDataURL('image/jpeg', 0.6).split(',')[1] });
+}
+
+function stopRec(rec){ return new Promise(res => { if (!rec || rec.state === 'inactive') return res(); rec.onstop = () => res(); rec.stop(); }); }
+
+async function stopSpeech(){
+  if (!S.tick) return;
+  clearInterval(S.tick); S.tick = null;
+  S.duration = (performance.now() - S.t0) / 1000;
+  stopRecognition();
+  await Promise.all([stopRec(S.recV), stopRec(S.recA)]);
+  if (S.videoUrl) URL.revokeObjectURL(S.videoUrl);
+  const vBlob = S.chunksV.length ? new Blob(S.chunksV, { type: S.recV.mimeType || 'video/webm' }) : null;
+  S.audioBlob = new Blob(S.chunksA, { type: S.recA.mimeType || S.mimeA || 'audio/webm' });
+  S.videoUrl = URL.createObjectURL(vBlob || S.audioBlob);
+  analyze();
+}
+
+/* ---------- 鈴聲（瀏覽器直接合成，不需音檔） ---------- */
+function ensureAudioCtx(){
+  try { if (!S.audioCtx) S.audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (S.audioCtx.state === 'suspended') S.audioCtx.resume(); } catch(e){}
+}
+function tone(start, len){
+  const ctx = S.audioCtx; if (!ctx) return;
+  [1318.5, 2637, 3951].forEach((f, i) => {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine'; o.frequency.value = f;
+    const peak = [0.5, 0.18, 0.08][i];
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(peak, start + 0.01);
+    if (len > 0.5) g.gain.setValueAtTime(peak * 0.8, start + len - 0.25);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + len);
+    o.connect(g).connect(ctx.destination); o.start(start); o.stop(start + len + 0.05);
+  });
+}
+function ring(kind){
+  ensureAudioCtx(); const ctx = S.audioCtx; if (!ctx) return;
+  const t = ctx.currentTime + 0.02;
+  if (kind === 'short') tone(t, 0.35);
+  else { tone(t, 0.35); tone(t + 0.6, 1.6); }
+}
+
+/* ---------- 即時字幕（Chrome 內建語音辨識，只當參考） ---------- */
+function startRecognition(){
+  const R = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!R) { $('caption').textContent = '（這個瀏覽器不支援即時字幕，建議用 Chrome）'; return; }
+  S.recog = new R(); S.recog.lang = 'zh-TW'; S.recog.continuous = true; S.recog.interimResults = true;
+  S.recogOn = true;
+  S.recog.onresult = (e) => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const r = e.results[i];
+      if (r.isFinal) S.finalText += '[' + fmt((performance.now() - S.t0)/1000) + '] ' + r[0].transcript + '\n';
+      else interim += r[0].transcript;
+    }
+    const lines = S.finalText.trim().split('\n');
+    $('caption').textContent = (lines.slice(-2).join(' ') + ' ' + interim).replace(/\[\d+:\d+\]\s*/g, '');
+  };
+  S.recog.onerror = () => {};
+  S.recog.onend = () => { if (S.recogOn) { try { S.recog.start(); } catch(e){} } };
+  try { S.recog.start(); } catch(e){}
+}
+function stopRecognition(){ S.recogOn = false; try { S.recog && S.recog.stop(); } catch(e){} }
+
+/* ---------- 4. 送分析 ---------- */
+function timeNote(sec){
+  if (sec < CONFIG.MIN_SEC - 3) { const p = Math.ceil((CONFIG.MIN_SEC - sec)/30); return { p, text:'不足 4 分鐘，扣 ' + p + ' 分' }; }
+  if (sec > CONFIG.MAX_SEC + 3) { const p = Math.ceil((sec - CONFIG.MAX_SEC)/30); return { p, text:'超過 5 分鐘，扣 ' + p + ' 分' }; }
+  return { p:0, text:'符合規定，不扣分' };
+}
+function blobToB64(blob){ return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.onerror = rej; r.readAsDataURL(blob); }); }
+
+async function analyze(){
+  show('s-wait');
+  setErr($('waitErr'), ''); $('waitActions').hidden = true;
+  const tn = timeNote(S.duration);
+  $('waitTiles').innerHTML = '';
+  addTile($('waitTiles'), '時長', fmt(S.duration), tn.text, tn.p ? 'var(--danger)' : 'var(--good)');
+  $('dlRaw').href = S.videoUrl; $('dlRaw').download = fileName();
+  try {
+    const audio = await blobToB64(S.audioBlob);
+    if (audio.length > 14 * 1024 * 1024) throw new Error('錄音檔太大，請縮短演說再試。');
+    const r = await api('analyze', {
+      student: S.student, topic: S.topic, durationSec: Math.round(S.duration),
+      audio: { mime: S.audioBlob.type, data: audio }, frames: S.frames, liveTranscript: S.finalText, plan: S.plan,
+    });
+    S.result = r; renderResult(r);
+  } catch (e) {
+    setErr($('waitErr'), 'AI 分析失敗：' + e.message + '。錄影還在，可以先下載，或再送一次。');
+    $('waitActions').hidden = false;
+  }
+}
+$('btnRetry').onclick = analyze;
+
+function fileName(){ const ext = (S.recV && S.recV.mimeType.includes('mp4')) ? 'mp4' : 'webm'; return '演說練習_' + S.student + '_' + S.topic + '.' + ext; }
+
+function addTile(box, k, v, n, color){
+  const d = document.createElement('div'); d.className = 'tile';
+  const a = document.createElement('div'); a.className='k'; a.textContent = k;
+  const b = document.createElement('div'); b.className='v'; b.textContent = v;
+  const c = document.createElement('div'); c.className='n'; c.textContent = n || ''; if (color) c.style.color = color;
+  d.append(a, b, c); box.appendChild(d);
+}
+
+/* ---------- 5. 結果 ---------- */
+function el(tag, cls, text){ const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+function renderResult(r){
+  const fb = r.feedback || {}, st = r.stats || {};
+  $('resMeta').textContent = S.student + '・' + new Date().toLocaleString('zh-TW', { hour12:false });
+  $('resTopic').textContent = S.topic;
+
+  const tiles = $('resTiles'); tiles.innerHTML = '';
+  addTile(tiles, '時長', fmt(st.durationSec || S.duration), st.timeNote || timeNote(S.duration).text, st.timePenalty ? 'var(--danger)' : 'var(--good)');
+  addTile(tiles, '語速（字／分）', st.speechRate || '—', st.speechRateNote || '');
+  const top = (st.fillerTop || []).slice(0, 2).map(x => '「' + x.word + '」' + x.count).join('、');
+  addTile(tiles, '口頭禪', (st.fillerCount ?? 0) + ' 次', top || '');
+  const sc = st.scores || {};
+  addTile(tiles, '練習估計分', st.total ?? '—', '語音 ' + (sc.voice ?? '—') + '・內容 ' + (sc.content ?? '—') + '・臺風 ' + (sc.stage == null ? '未評' : sc.stage));
+
+  $('resIdea').textContent = '你想告訴大家的是：' + (fb.main_idea || '（沒有找到明確主旨）');
+  $('resPlan').textContent = fb.plan_check ? '對照表達地圖：' + fb.plan_check : '';
+
+  const good = $('resGood'); good.innerHTML = '';
+  (fb.strengths || []).forEach((x, i) => {
+    const c = el('div', 'fb good');
+    c.append(el('div', 'head', (i+1) + '. ' + x.point));
+    if (x.time) c.append(el('div', 'meta', '在 ' + x.time));
+    if (x.evidence) c.append(el('div', 'quote', x.evidence));
+    good.appendChild(c);
+  });
+
+  const warn = $('resWarn'); warn.innerHTML = '';
+  (fb.improvements || []).forEach((x, i) => {
+    const c = el('div', 'fb warn');
+    const h = el('div', 'head'); h.append(el('span', 'chip', x.category || '')); h.append(document.createTextNode((i+1) + '. ' + x.problem));
+    c.append(h);
+    if (x.time) c.append(el('div', 'meta', '在 ' + x.time));
+    if (x.evidence) c.append(el('div', 'quote', x.evidence));
+    if (x.why) c.append(el('div', '', '為什麼：' + x.why));
+    const n = el('div', 'next'); n.append(el('b', '', '下次這樣做：')); n.append(document.createTextNode(x.next_step || ''));
+    c.append(n);
+    warn.appendChild(c);
+  });
+
+  $('resFocus').textContent = '下次只要專心做到：' + (fb.focus_next || '');
+  $('resTranscript').textContent = fb.transcript || '';
+  $('replay').src = S.videoUrl; $('dlVideo').href = S.videoUrl; $('dlVideo').download = fileName();
+  $('ttsAudio').hidden = true; $('ttsNote').textContent = ''; $('btnSpeak').disabled = false;
+  show('s-result');
+}
+
+/* ---------- 朗讀評講 ---------- */
+function pcmToWav(bytes, rate){
+  const h = new ArrayBuffer(44), v = new DataView(h), n = bytes.length;
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  w(0,'RIFF'); v.setUint32(4, 36 + n, true); w(8,'WAVE'); w(12,'fmt '); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate*2, true); v.setUint16(32,2,true); v.setUint16(34,16,true); w(36,'data'); v.setUint32(40, n, true);
+  return new Blob([h, bytes], { type:'audio/wav' });
+}
+function b64ToBytes(b64){ const s = atob(b64), a = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; }
+
+$('btnSpeak').onclick = async () => {
+  const text = (S.result && S.result.feedback && S.result.feedback.spoken_script) || '';
+  if (!text) return;
+  if (S.ttsUrl) { $('ttsAudio').play(); return; }
+  $('btnSpeak').disabled = true; $('ttsNote').textContent = '老師正在準備聲音，約 10～20 秒…';
+  try {
+    if (isDemo()) throw new Error('demo');
+    const r = await api('tts', { text });
+    const bytes = b64ToBytes(r.audio);
+    const isWav = bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46;
+    const blob = isWav ? new Blob([bytes], { type:'audio/wav' }) : pcmToWav(bytes, r.sampleRate || 24000);
+    S.ttsUrl = URL.createObjectURL(blob);
+    const a = $('ttsAudio'); a.src = S.ttsUrl; a.hidden = false; a.play();
+    $('ttsNote').textContent = '';
+  } catch (e) {
+    speakWithBrowser(text);
+    $('ttsNote').textContent = isDemo() ? '示範模式：用瀏覽器內建語音朗讀。' : 'AI 語音暫時無法使用，改用瀏覽器內建語音。';
+  }
+  $('btnSpeak').disabled = false;
+};
+function speakWithBrowser(text){
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const voices = speechSynthesis.getVoices();
+  u.voice = voices.find(v => v.lang === 'zh-TW') || voices.find(v => /zh[-_]?(TW|Hant)/i.test(v.lang)) || voices.find(v => /^zh/i.test(v.lang)) || null;
+  u.lang = 'zh-TW'; u.rate = 0.95;
+  speechSynthesis.speak(u);
+}
+
+/* ---------- 再練一次 ---------- */
+function resetAll(){
+  try { speechSynthesis.cancel(); } catch(e){}
+  $('ttsAudio').pause();
+  S.topic = ''; $('topicBox').hidden = true; $('drawRow').hidden = false; $('prepClock').style.color = '';
+  show('s-start');
+}
+$('btnAgain').onclick = resetAll;
+$('btnAgain2').onclick = resetAll;
+
+/* ---------- 示範模式：不連後端，用假資料跑完整流程 ---------- */
+const DEMO_TOPICS = ['在挫折中學習','可貴的合作經驗','閱讀陪我成長','一張泛黃的照片','轉念就會不一樣','不一樣的一堂課'];
+async function demoApi(action, p){
+  await new Promise(r => setTimeout(r, action === 'analyze' ? 1500 : 300));
+  if (action === 'drawTopic') { const pool = DEMO_TOPICS.filter(t => t !== p.exclude); return { ok:true, topic: pool[Math.floor(Math.random()*pool.length)] }; }
+  if (action === 'analyze') {
+    const tn = timeNote(p.durationSec);
+    return { ok:true, stats:{ durationSec:p.durationSec, timeNote:tn.text, timePenalty:tn.p, speechRate:186, speechRateNote:'適中', fillerCount:7, fillerTop:[{word:'然後',count:4},{word:'嗯',count:3}], repeatCount:2, longPauseCount:1, scores:{voice:78,content:74,stage:80}, total:76 - tn.p },
+      feedback:{
+        main_idea:'（示範資料）一起珍惜地球，從自己隨手關燈做起。',
+        transcript:'[0:00] 我是第三號，今天演說的題目是「珍惜地球的資源」。\n[0:08] 嗯，上個禮拜我在海邊撿到好多寶特瓶……（示範資料）',
+        strengths:[
+          { point:'開頭用自己在海邊撿垃圾的經驗帶進題目', time:'0:08', evidence:'「上個禮拜我在海邊撿到好多寶特瓶」' },
+          { point:'結尾有回到題目，說出自己會怎麼做', time:'4:21', evidence:'「從今天開始，我出門一定帶水壺」' },
+          { point:'說到數字時有放慢、加重語氣', time:'1:45', evidence:'「一個寶特瓶要四百五十年才會分解」' },
+        ],
+        improvements:[
+          { category:'結構', problem:'第二段和第三段在說同一件事', time:'2:10', evidence:'「我們要節約用電」「所以大家要省電」', why:'重複的意思會佔掉時間，聽的人也會覺得內容變少', next_step:'把第三段換成「省水」，再舉一個家裡的例子' },
+          { category:'語音', problem:'「然後」出現太多次', time:'1:02', evidence:'「然後我們就去……然後老師說……」', why:'口頭禪會讓句子聽起來不俐落', next_step:'想說「然後」的時候，改成停一拍' },
+          { category:'語音', problem:'句尾一路往下掉', time:'3:05', evidence:'「這樣地球才會越來越好」', why:'句尾太輕，評審聽不清楚重點', next_step:'最後兩個字說清楚、說完再停' },
+          { category:'詞彙與例子', problem:'中間用了名言但沒有自己的例子', time:'2:40', evidence:'「有人說，地球只有一個」', why:'名言人人會說，自己的例子才有說服力', next_step:'放一個你自己的例子，例如＿＿' },
+          { category:'臺風', problem:'講到後半段眼睛一直往上看', time:'3:20', evidence:'畫面 3:20', why:'看起來像在想稿子', next_step:'每講完一段，看一眼評審席' },
+        ],
+        plan_check:'（示範資料）三段都有講到，但第三段的關鍵字「省水」沒有出現，改講了省電。',
+        focus_next:'把「然後」換成停一拍。',
+        spoken_script: S.student + '，這是示範模式的評講。你這次講了' + fmt(p.durationSec) + '，' + tn.text + '。先說三個優點：開頭用海邊撿寶特瓶的經驗，一下子就把大家帶進題目；結尾有說出你自己會怎麼做；講到數字的時候有放慢加重。接下來五個要改的地方：第二段和第三段意思重複，可以換成省水的例子；然後說太多次，想說的時候停一拍；句尾要說清楚；名言後面要接你自己的例子；後半段眼睛要記得看評審。下次只要專心做到：把然後換成停一拍。'
+      } };
+  }
+  if (action === 'tts') throw new Error('demo');
+  return { ok:true };
+}
+
+renderBank();
+</script>
+</body>
+</html>
