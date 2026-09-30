@@ -132,6 +132,31 @@ details pre{white-space:pre-wrap;font-family:inherit;font-size:15px;background:v
 .tabs button[aria-selected="true"]{background:var(--surface);color:var(--primary);box-shadow:var(--shadow)}
 .script-peek{margin-top:12px}
 .script-peek pre{max-height:220px}
+.qrule{margin:10px 0 4px;padding:10px 14px 10px 32px;border-radius:10px;background:var(--warn-soft);color:var(--ink);font-size:15px}
+.qrule li{margin:2px 0}
+.qtabs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 4px}
+.qtabs button{border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);padding:7px 14px;border-radius:999px;cursor:pointer;font-weight:700;font-size:15px}
+.qtabs button[aria-selected="true"]{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+.qsug{margin-left:6px;font-size:11px;padding:1px 6px;border-radius:999px;background:var(--good-soft);color:var(--good);vertical-align:2px}
+.qhint{margin:4px 0 8px}
+.qlist{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.qlist .qhint{grid-column:1/-1}
+@media (max-width:760px){.qlist{grid-template-columns:1fr}}
+.qcard{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--surface);display:flex;flex-direction:column;gap:6px}
+.qwho{font-size:18px;color:var(--primary)}
+.qintro{margin:0;font-size:14px;color:var(--ink-2)}
+.qtext{margin:4px 0;padding:10px 14px;border-left:4px solid var(--primary);background:var(--primary-soft);border-radius:8px;font-size:18px;font-weight:700;line-height:1.55}
+.qorig{margin:0;font-size:13px;color:var(--ink-2);font-style:italic}
+.qsrc{margin:0;font-size:13px;color:var(--ink-2)}
+.qtopics{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.qchip{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line)}
+.qbridge{margin:2px 0 0;font-size:14px;padding:8px 10px;border-radius:8px;background:var(--good-soft)}
+.qbridge b{color:var(--good)}
+.qpick{align-self:flex-start;padding:6px 14px;font-size:14px;margin-top:4px}
+.qpicked{margin:6px 0 0;font-size:14px;padding:8px 12px;border-radius:8px;background:var(--primary-soft)}
+.linkbtn{border:0;background:none;color:var(--primary);text-decoration:underline;cursor:pointer;padding:0 4px;font-size:14px}
+.quote-ref{margin-top:20px;border-top:1px solid var(--line);padding-top:12px}
+.quote-ref summary,#quoteBox summary{cursor:pointer}
 </style>
 </head>
 <body>
@@ -196,6 +221,15 @@ details pre{white-space:pre-wrap;font-family:inherit;font-size:15px;background:v
       <div class="row"><button class="btn ghost" id="btnAddStory">＋ 新增一個故事</button></div>
       <p class="note">素材庫只存在這台電腦的瀏覽器。</p>
     </details>
+    <details class="card bank" id="quoteBox">
+      <summary><b>名言參考卡</b> <span class="note">不想再引用愛迪生？這裡有 10 句貼近你們這一代的名言</span></summary>
+      <ul class="qrule">
+        <li>一場演說引用<b>一句</b>就夠，放在開頭破題或結尾收束。</li>
+        <li>引用完，馬上接<b>你自己的故事</b>，說出這句話跟你有什麼關係。只有名言、沒有自己的例子，會被扣分。</li>
+        <li>人名、時間、場合要講對；記不清楚，就說「我曾經讀到一句話」。</li>
+      </ul>
+      <div id="homeQuotes"></div>
+    </details>
   </section>
 
   <!-- 2. 準備 -->
@@ -218,7 +252,8 @@ details pre{white-space:pre-wrap;font-family:inherit;font-size:15px;background:v
           <div class="map">
             <div class="field"><label for="mIdea">主旨：我要告訴大家的是</label><input type="text" id="mIdea" maxlength="40"></div>
             <div class="field"><label for="mOpen">破題（鳳頭）</label>
-              <select id="mOpen"><option value="">選一種開頭</option><option>提問破題：用一個問題開場</option><option>故事破題：直接把大家帶進一個畫面</option><option>引用破題：一句名言或文學意象</option></select></div>
+              <select id="mOpen"><option value="">選一種開頭</option><option>提問破題：用一個問題開場</option><option>故事破題：直接把大家帶進一個畫面</option><option>引用破題：一句名言或文學意象</option></select>
+              <p class="qpicked" id="mQuote" hidden>開頭引用 <span id="mQuoteText"></span> <button type="button" class="linkbtn" id="mQuoteClear">取消</button></p></div>
             <div class="parts" id="mParts"></div>
             <div class="field"><label for="mEnd">結尾（豹尾）：重述重點＋一句話，或說出行動</label><input type="text" id="mEnd" maxlength="40"></div>
             <p class="note" id="mWarn" hidden>字有點多了，表達地圖只寫關鍵字就好。</p>
@@ -238,6 +273,15 @@ details pre{white-space:pre-wrap;font-family:inherit;font-size:15px;background:v
           <ul class="stories" id="prepStories"></ul>
         </div>
       </div>
+      <details class="quote-ref" id="prepQuoteRef">
+        <summary><b>名言參考卡</b> <span class="note">想用引用破題，就從這裡挑一句；引用完一定要接你自己的故事</span></summary>
+        <ul class="qrule">
+        <li>一場演說引用<b>一句</b>就夠，放在開頭破題或結尾收束。</li>
+        <li>引用完，馬上接<b>你自己的故事</b>，說出這句話跟你有什麼關係。只有名言、沒有自己的例子，會被扣分。</li>
+        <li>人名、時間、場合要講對；記不清楚，就說「我曾經讀到一句話」。</li>
+      </ul>
+        <div id="prepQuotes"></div>
+      </details>
     </div>
   </section>
 
@@ -350,7 +394,7 @@ const store = {
 };
 const S = { student:'', topic:'', stream:null, recV:null, recA:null, chunksV:[], chunksA:[], mimeA:'', t0:0, tick:null,
   rung4:false, rung5:false, frames:[], recog:null, recogOn:false, finalText:'', audioCtx:null, videoUrl:'', audioBlob:null,
-  duration:0, result:null, ttsUrl:'', prepTimer:null, mode:'draw', script:'', plan:null };
+  duration:0, result:null, ttsUrl:'', prepTimer:null, mode:'draw', script:'', plan:null, quote:null };
 
 const IN_GAS = typeof google !== 'undefined' && google.script && google.script.run;
 function apiUrl(){ return CONFIG.GAS_URL || store.get('gasUrl'); }
@@ -477,10 +521,12 @@ function renderMap(){
     box.append(p);
   });
   ['mIdea','mEnd'].forEach(id => $(id).value = ''); $('mOpen').value = '';
+  setPrepQuote(null);
 }
 function collectPlan(){
   const v = (id) => ($(id) ? $(id).value.trim() : '');
-  return { idea: v('mIdea'), opening: v('mOpen'), ending: v('mEnd'),
+  const opening = v('mOpen') + (S.quote ? '（準備引用 ' + S.quote.who + '：「' + S.quote.text + '」）' : '');
+  return { idea: v('mIdea'), opening: opening, ending: v('mEnd'),
     parts: [0,1,2].map(i => ({ point: v('mpoint'+i), story: v('mstory'+i), key: v('mkey'+i) })) };
 }
 document.addEventListener('input', (e) => {
@@ -494,6 +540,8 @@ $('btnBeginPrep').onclick = async () => {
   S.mode = 'draw'; S.script = '';
   $('prepTopic').textContent = S.topic;
   renderMap(); renderPrepStories();
+  $('prepQuoteRef').open = false;
+  renderQuotes($('prepQuotes'), { topic: S.topic, pick: setPrepQuote });
   show('s-prep');
   openCamera();
   const total = Number($('prepMin').value) * 60;
@@ -537,6 +585,151 @@ function renderPrepStories(){
   bank.forEach(s => ul.append(el('li', '', s.title + (s.note ? '：' + s.note : ''))));
 }
 $('btnToStage').onclick = () => { clearInterval(S.prepTimer); goStage(); };
+
+/* ---------- 名言參考卡：貼近孩子、貼近時代的名人名言（2026-09 查證出處） ---------- */
+// 每句都附上場合與時間，讓學生引用時講得出「誰、什麼時候、在哪裡說的」
+const QUOTE_CATS = [
+  { id:'earth', name:'愛護地球', hint:'環境永續、珍惜資源、愛護動物',
+    keys:/環境|地球|永續|氣候|自然|生態|垃圾|資源|節能|減塑|海洋|動物|綠|植物|樹/,
+    items:[
+      { who:'桑伯格（Greta Thunberg）', intro:'瑞典環保少女。15 歲起每個星期五坐在國會前「為氣候罷課」，後來全世界有上百萬名學生跟著一起行動。',
+        text:'我學到了一件事：再小的人，也能帶來改變。',
+        orig:'I\'ve learned you are never too small to make a difference.',
+        src:'2018 年 12 月，聯合國氣候大會（波蘭卡托維茲）演講，當時她 15 歲。',
+        topics:['值得我堅持的一件事','一則新聞的啟示'],
+        bridge:'桑伯格 15 歲就敢一個人坐在國會前面。那我呢？我能做的第一件小事是＿＿。' },
+      { who:'珍古德（Jane Goodall）', intro:'英國動物學家，在非洲觀察黑猩猩超過 60 年。2025 年 6 月最後一次來臺灣演講，同年 10 月過世，享壽 91 歲。',
+        text:'你不可能過完一天，卻對身邊的世界沒有任何影響。你做的事會帶來改變，你要決定的是：帶來什麼樣的改變。',
+        orig:'You cannot get through a single day without having an impact on the world around you. What you do makes a difference, and you have to decide what kind of difference you want to make.',
+        src:'珍古德在演講中常說的話，珍古德協會也常引用。',
+        topics:['成為有溫度的人','轉念就會不一樣'],
+        bridge:'我一天裡做的哪件小事，其實也在改變身邊的人或環境？＿＿' },
+    ] },
+  { id:'tech', name:'科技與學習', hint:'AI 與未來、自主學習、閱讀的力量',
+    keys:/科技|AI|人工智慧|網路|線上|電腦|手機|未來|學習|課|讀書|閱讀|書|老師|自主|夢想|知識/,
+    items:[
+      { who:'黃仁勳', intro:'在臺南出生、9 歲到美國。他創辦的輝達（NVIDIA）做的晶片，是現在 AI 的「大腦」。',
+        text:'不管你追求的是什麼，都要全力去追。用跑的，不要用走的！',
+        orig:'Whatever it is, run after it like we did. Run. Don\'t walk.',
+        src:'2023 年 5 月，臺灣大學畢業典禮演講。',
+        topics:['課堂外的自主學習','我的線上學習經驗'],
+        bridge:'我現在最想「用跑的」去追的一件事是＿＿，因為＿＿。' },
+      { who:'馬拉拉（Malala Yousafzai）', intro:'巴基斯坦女孩，為了爭取女生上學的權利被攻擊受傷，卻沒有放棄。17 歲成為最年輕的諾貝爾和平獎得主。',
+        text:'一個孩子、一位老師、一本書、一枝筆，就能改變世界。',
+        orig:'One child, one teacher, one book, and one pen can change the world.',
+        src:'2013 年 7 月 12 日，她 16 歲生日當天在聯合國演講。',
+        topics:['閱讀陪我成長','不一樣的一堂課','我最敬佩的師長'],
+        bridge:'改變我的那一本書（或那一位老師）是＿＿，那時候＿＿。' },
+    ] },
+  { id:'effort', name:'堅持努力', hint:'面對挫折、不放棄、勇敢踏出第一步',
+    keys:/堅持|努力|挫折|風雨|阻力|助力|缺點|苦|失敗|轉念|放棄|困難|低潮/,
+    items:[
+      { who:'彭于晏', intro:'演員。拍《翻滾吧！阿信》時真的去練體操，也為其他角色練過拳擊、武術；他說自己也遇過很不順的低潮。',
+        text:'覺得不順遂的時候，千萬不要卡在那過不去，告訴自己這都是你必須經歷的。',
+        src:'2016 年 8 月《美麗佳人》專訪。',
+        topics:['在挫折中學習','陽光總在風雨後','把阻力化為助力'],
+        bridge:'我也有一段卡住、很不順的時候：＿＿。後來我告訴自己＿＿。' },
+      { who:'蔡依林', intro:'歌手。常被形容是靠努力的「地才」，一路學體操、舞蹈，也第一次挑戰替動畫配音。',
+        text:'想像的恐懼是虛假的，真的去做時，才知道沒有這麼可怕。',
+        src:'2016 年 4 月《美麗佳人》專訪，談第一次替動畫《動物方城市》配音。',
+        topics:['面對自己的缺點','成長中的苦與樂','轉念就會不一樣'],
+        bridge:'我第一次＿＿之前也好害怕，真的做了才發現＿＿。' },
+    ] },
+  { id:'brave', name:'勇敢挑戰', hint:'面對壓力、自信、朝大目標前進',
+    keys:/挑戰|勇敢|勇氣|自信|壓力|比賽|目標|突破|第一次|緊張|超越|運動/,
+    items:[
+      { who:'大谷翔平', intro:'日本棒球選手，能投又能打。2023 年世界棒球經典賽（WBC）冠軍賽，日本隊要對上明星滿滿的美國隊。',
+        text:'今天就讓我們停止崇拜他們吧！一直崇拜，就沒辦法超越。',
+        orig:'憧れるのをやめましょう。……憧れてしまったら超えられないんで。',
+        src:'2023 年 3 月 WBC 冠軍賽開打前，對日本隊隊友喊話；那場日本隊贏得冠軍。',
+        topics:['值得我堅持的一件事','在挫折中學習'],
+        bridge:'我也有一個一直覺得「比不上」的對手或目標：＿＿。那一次我決定＿＿。' },
+      { who:'陳傑憲', intro:'中華隊隊長。2024 年 11 月世界棒球 12 強賽，中華隊在東京巨蛋打敗日本拿下冠軍，他是 MVP。',
+        text:'不用把目標放遠，每天把每一步確實走好，慢慢走會走到盡頭。',
+        src:'2024 年 11 月 24 日 12 強奪冠後受訪，談當隊長的壓力（中央社報導）。',
+        topics:['值得我堅持的一件事','成長中的苦與樂'],
+        bridge:'面對＿＿這麼大的目標，我把它切成每天的一小步：＿＿。' },
+    ] },
+  { id:'team', name:'合作與分享', hint:'團隊合作、相信同伴、把好東西分享出去',
+    keys:/合作|團隊|團結|同學|朋友|溫度|分享|感謝|感恩|家人|人際|拒絕|情緒|幫助|關懷|師長|敬佩/,
+    items:[
+      { who:'陳傑憲', intro:'中華隊隊長。2024 年 12 強冠軍賽，他在關鍵時刻擊出全壘打，賽後第一個感謝的是隊友。',
+        text:'我們真的很團結。我上去打擊時，不覺得自己會輸，因為隊友很挺……我也相信我的隊友。',
+        src:'2024 年 11 月 24 日 12 強奪冠後受訪（中央社報導）。',
+        topics:['可貴的合作經驗','成為有溫度的人'],
+        bridge:'在我們的＿＿小組裡，也有人讓我覺得「有他在，我不會輸」：＿＿。' },
+      { who:'大谷翔平', intro:'2023 年 11 月，他送給日本全國約 2 萬所小學、每校 3 個兒童棒球手套，一共約 6 萬個。',
+        text:'一起來打棒球吧！……很期待將來能和用過這些手套的孩子們，一起打棒球。',
+        orig:'野球しようぜ！……このグローブを使っていた子供達と将来一緒に野球ができることを楽しみにしています！',
+        src:'2023 年 11 月，宣布送手套時在社群網站上寫的話。',
+        topics:['成為有溫度的人','可貴的合作經驗'],
+        bridge:'我也想把＿＿分享給別人，因為曾經有人這樣對我：＿＿。' },
+    ] },
+];
+
+// 依題目關鍵字建議分類；比較明確的主題先比對（「在挫折中學習」算堅持努力，不算學習）
+const QUOTE_GUESS_ORDER = ['earth', 'effort', 'brave', 'team', 'tech'];
+function guessQuoteCat(topic){
+  const t = String(topic || '');
+  const id = QUOTE_GUESS_ORDER.find(id => QUOTE_CATS.find(c => c.id === id).keys.test(t));
+  return id || '';
+}
+
+// box：放卡片的容器；opts.pick：有的話，每張卡片多一顆「用這句當開頭」按鈕
+function renderQuotes(box, opts){
+  opts = opts || {};
+  box.innerHTML = '';
+  const guess = guessQuoteCat(opts.topic);
+  let cur = guess || store.get('quoteCat') || QUOTE_CATS[0].id;
+  if (!QUOTE_CATS.some(c => c.id === cur)) cur = QUOTE_CATS[0].id;
+
+  const tabs = el('div', 'qtabs'); tabs.setAttribute('role', 'tablist'); tabs.setAttribute('aria-label', '名言分類');
+  const list = el('div', 'qlist');
+  const draw = () => {
+    tabs.querySelectorAll('button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.id === cur)));
+    list.innerHTML = '';
+    const cat = QUOTE_CATS.find(c => c.id === cur);
+    list.append(el('p', 'note qhint', cat.hint));
+    cat.items.forEach(q => {
+      const card = el('article', 'qcard');
+      const head = el('div', 'qwho'); head.append(el('b', '', q.who)); card.append(head);
+      card.append(el('p', 'qintro', q.intro));
+      card.append(el('blockquote', 'qtext', '「' + q.text + '」'));
+      if (q.orig) card.append(el('p', 'qorig', '原文：' + q.orig));
+      card.append(el('p', 'qsrc', '出處：' + q.src));
+      const tp = el('div', 'qtopics'); tp.append(el('span', 'note', '可以接：'));
+      q.topics.forEach(t => tp.append(el('span', 'qchip', t))); card.append(tp);
+      const br = el('p', 'qbridge'); br.append(el('b', '', '引用完接自己：')); br.append(document.createTextNode(q.bridge)); card.append(br);
+      if (opts.pick) {
+        const btn = el('button', 'btn ghost qpick', '用這句當開頭'); btn.type = 'button';
+        btn.onclick = () => opts.pick(q);
+        card.append(btn);
+      }
+      list.append(card);
+    });
+  };
+  QUOTE_CATS.forEach(c => {
+    const b = el('button', '', c.name); b.type = 'button'; b.dataset.id = c.id; b.setAttribute('role', 'tab');
+    if (c.id === guess) b.append(el('span', 'qsug', '建議'));
+    b.onclick = () => { cur = c.id; store.set('quoteCat', cur); draw(); };
+    tabs.append(b);
+  });
+  box.append(tabs, list);
+  draw();
+}
+
+// 準備畫面：選一句名言當破題，會一起送給 AI 老師對照
+function setPrepQuote(q){
+  S.quote = q ? { who: q.who, text: q.text } : null;
+  const n = $('mQuote');
+  if (!S.quote) { n.hidden = true; return; }
+  $('mOpen').value = '引用破題：一句名言或文學意象';
+  $('mQuoteText').textContent = S.quote.who + '：「' + S.quote.text + '」';
+  n.hidden = false;
+  $('mOpen').scrollIntoView({ behavior:'smooth', block:'center' });
+}
+$('mQuoteClear').onclick = () => setPrepQuote(null);
+$('mOpen').addEventListener('change', () => { if (!/^引用/.test($('mOpen').value)) setPrepQuote(null); });
 
 /* ---------- 鏡頭與麥克風選擇 ---------- */
 // OBS、Snap Camera、ManyCam、NVIDIA Broadcast 等虛擬鏡頭常常搶走預設位置，畫面卻是黑的
@@ -931,6 +1124,7 @@ async function demoApi(action, p){
 }
 
 renderBank();
+renderQuotes($('homeQuotes'));
 </script>
 </body>
 </html>
